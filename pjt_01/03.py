@@ -1,5 +1,5 @@
 import requests
-from pprint import pprint
+# from pprint import pprint
 from decouple import config # .env 를 이용해서 정보 보안
 import csv
 
@@ -37,7 +37,7 @@ with open('movie.csv', 'r', newline='', encoding='utf-8') as f:
 #               pprint(director_info)
             
             
-pprint(directors_info)
+# pprint(directors_info)
 
 with open('director.csv', 'w', newline='', encoding='utf-8') as f:
     fieldnames = ('peopleCd', 'peopleNm', 'repRoleNm', 'filmoNames')
