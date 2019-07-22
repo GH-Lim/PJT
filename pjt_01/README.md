@@ -68,7 +68,7 @@ with open('boxoffice.csv', 'w', newline='', encoding='utf-8') as f:
 
 boxoffice.csv 파일 출력 예시
 
-![boxoffice.csv](C:\Users\student\development\PJT\images\01pjt\boxoffice.PNG)
+![boxoffice.csv](.\images\boxoffice.PNG)
 
 ### 2. 영화진흥위원회 오픈 API(영화 상세정보) - 02.py
 
@@ -139,7 +139,7 @@ with open('movie.csv', 'w', newline='', encoding='utf-8') as f:
 
 movie.csv 출력 예시
 
-![movie.csv](C:\Users\student\development\PJT\images\01pjt\movie.PNG)
+![movie.csv](.\images\movie.PNG)
 
 ### 3. 영화진흥위원회 오픈 API(영화인 정보) - 03.py
 
@@ -197,4 +197,4 @@ with open('director.csv', 'w', newline='', encoding='utf-8') as f:
 
 director.csv 파일 출력 예시
 
-![director.csv](C:\Users\student\development\PJT\images\01pjt\director.PNG)
+![director.csv](.\images\director.PNG)
