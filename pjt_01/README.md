@@ -1,5 +1,4 @@
 
-
 # PJT-01
 
 ## 파이썬을 활용한 데이터 수집 I
@@ -68,7 +67,7 @@ with open('boxoffice.csv', 'w', newline='', encoding='utf-8') as f:
 
 boxoffice.csv 파일 출력 예시
 
-![boxoffice.csv](https://github.com/GH-Lim/PJT/blob/master/pjt_01/images/boxoffice.PNG)
+![boxoffice.csv](images/boxoffice.PNG)
 
 ### 2. 영화진흥위원회 오픈 API(영화 상세정보) - 02.py
 
@@ -139,7 +138,7 @@ with open('movie.csv', 'w', newline='', encoding='utf-8') as f:
 
 movie.csv 출력 예시
 
-![movie.csv](https://github.com/GH-Lim/PJT/blob/master/pjt_01/images/movie.PNG)
+![movie.csv](images/movie.PNG)
 
 ### 3. 영화진흥위원회 오픈 API(영화인 정보) - 03.py
 
@@ -197,4 +196,4 @@ with open('director.csv', 'w', newline='', encoding='utf-8') as f:
 
 director.csv 파일 출력 예시
 
-![director.csv](https://github.com/GH-Lim/PJT/blob/master/pjt_01/images/director.PNG)
+![director.csv](images/director.PNG)
