@@ -111,7 +111,7 @@ json 형식으로 요청하기 위한 URL 입니다. get 메서드를 사용합�
 
   `movie_naver.csv` 출력예시
 
-  ![movie_naver.PNG](README_images\movie_naver.PNG)
+  ![movie_naver.PNG](README_images/movie_naver.PNG)
 
 ### 2. 영화 포스터 이미지 저장 - `movie_image.py`
 
@@ -148,5 +148,5 @@ json 형식으로 요청하기 위한 URL 입니다. get 메서드를 사용합�
 
   `movieCd.jpg` 파일 예시
 
-  ![movie_image.PNG](README_images\movie_image.PNG)
+  ![movie_image.PNG](README_images/movie_image.PNG)
 
