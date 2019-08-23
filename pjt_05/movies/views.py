@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from .models import Movie
+import datetime
 
 
 def index(request):
@@ -22,7 +23,6 @@ def new(request):
 
 def create(request):
     title = request.GET.get('title')
-    print(title)
     title_en = request.GET.get('title_en')
     audience = request.GET.get('audience')
     open_date = request.GET.get('open_date')
@@ -37,3 +37,38 @@ def create(request):
     movie.save()
 
     return render(request, 'movies/create.html')
+
+
+def edit(request, movie_pk):
+    movie = Movie.objects.get(pk=movie_pk)
+    
+    yy = movie.open_date.strftime('%Y-%m-%d')
+    context = {
+        'movie': movie,
+        'yy': yy,
+    }
+    return render(request, 'movies/edit.html', context)
+
+
+def update(request, movie_pk):
+    movie = Movie.objects.get(pk=movie_pk)
+
+    movie.title = request.GET.get('title')
+    movie.title_en = request.GET.get('title_en')
+    movie.audience = request.GET.get('audience')
+    movie.open_date = request.GET.get('open_date')
+    movie.genre = request.GET.get('genre')
+    movie.watch_grade = request.GET.get('watch_grade')
+    movie.score = request.GET.get('score')
+    movie.poster_url = request.GET.get('poster_url')
+    movie.description = request.GET.get('description')
+
+    movie.save()
+
+    return render(request, 'movies/update.html')
+
+
+def delete(request, movie_pk):
+    movie = Movie.objects.get(pk=movie_pk)
+    movie.delete()
+    return render(request, 'movies/delete.html')

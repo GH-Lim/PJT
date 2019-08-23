@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Movie Edit{% endblock title %}
+
+{% block content %}
+  <div class="container">
+    <h1>영화 정보 수정</h1>
+    <form action="/movies/{{ movie.pk }}/update/">
+      <div class="form-group">
+        <label for="title">영화명</label>
+        <input class="form-control" type="text" id="title" name="title" value="{{ movie.title }}">
+      </div>
+      <div class="form-group">
+        <label for="title_en">영화명(영문)</label>
+        <input class="form-control" type="text" id="title_en" name="title_en" value="{{ movie.title_en }}">
+      </div>
+      <div class="form-group">
+        <label for="audience">누적 관객수</label>
+        <input class="form-control" type="number" min=0 id="audience" name="audience" value="{{ movie.audience }}">
+      </div>
+      <div class="form-group">
+        <label for="open_date">개봉일</label>
+        <input class="form-control" type="date" id="open_date" name="open_date" value="{{ yy }}">
+      </div>
+      <div class="form-group">
+        <label for="genre">장르</label>
+        <input class="form-control" type="text" id="genre" name="genre" value="{{ movie.genre }}">
+      </div>
+      <div class="form-group">
+        <label for="watch_grade">관람등급</label>
+        <input class="form-control" type="text" id="watch_grade" name="watch_grade" value="{{ movie.watch_grade }}">
+      </div>
+      <div class="form-group">
+        <label for="score">평점</label>
+        <input class="form-control" type="number" step=0.01 min=0 id="score" name="score" value="{{ movie.score }}">
+      </div>
+      <div class="form-group">
+        <label for="poster_url">포스터 이미지 URL</label>
+        <input class="form-control" type="text" id="poster_url" name="poster_url" value="{{ movie.poster_url }}">
+      </div>
+      <div class="form-group">
+        <label for="description">영화 소개</label>
+        <textarea class="form-control" id="description" rows="3" name="description">{{ movie.description }}</textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">수정 하기</button>
+      <a class="btn btn-secondary" href="/movies/" role="button">취소</a>
+    </form>
+  </div>
+{% endblock content %}
