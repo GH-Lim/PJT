@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}영화 정보 조회{% endblock title %}
+
+{% block body %}
+<h1>영화 제목 (en): {{ movie.title }} ({{ movie.title_en }})</h1>
+<h2>개봉일: {{ movie.open_date }}  평점: {{ movie.score }}</h2>
+<img src="{% static movie.poster_url %}" alt="poster_url" width="100px">
+<p>관람객 수: {{ movie.audience }}</p>
+<p>장르: {{ movie.genre }}</p>
+<p>줄거리: {{ movie.description }}</p>
+<a href="{% url 'movies:index' %}"><button>뒤로가기</button></a>
+<a href="{% url 'movies:update' movie.pk %}"><button>수정하기</button></a>
+<form action="{% url 'movies:delete' movie.pk %}" method="POST">{% csrf_token %}<button type="submit">삭제하기</button></form>
+<hr>
+
+<h3>한줄평</h3>
+<form action="{% url 'movies:reviews' movie.pk %}" method="POST">
+  {% csrf_token %}
+  {{ review_form.as_p }}
+  <button type="submit">등록</button>
+</form>
+
+
+{% for review in reviews %}
+<ul>
+  <li>{{ review.content }} - 별점: {{ review.score }}</li>
+</ul>
+{% empty %}
+<p>아직 한줄평이 없어요 ㅜㅜ</p>
+{% endfor %}
+{% endblock body %}
