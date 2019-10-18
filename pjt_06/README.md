@@ -13,13 +13,16 @@ $ pip freeze > requirments.txt
 - `requirements.txt`
 
   ```txt
+  beautifulsoup4==4.8.1
   Django==2.2.6
+  django-bootstrap4==1.0.1
   pytz==2019.3
+soupsieve==1.9.4
   sqlparse==0.3.0
-  ```
-
+```
+  
   설치법
-
+  
   ```bash
   $ pip install -r requirements.txt
   ```
