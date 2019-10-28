@@ -1,8 +1,10 @@
-# PJT-06 README
+# PJT-07 README
 
-## Django 준비사항
+## 페어프로그래밍 (신지영, 임건혁)
 
-#### Project name: pjt06 / App name:  movies
+### Django 준비사항
+
+#### Project name: pjt07 / App name:  movies, accounts
 
 #### Python version: 3.7.4
 
@@ -17,389 +19,237 @@ $ pip freeze > requirments.txt
   Django==2.2.6
   django-bootstrap4==1.0.1
   pytz==2019.3
-soupsieve==1.9.4
+  soupsieve==1.9.4
   sqlparse==0.3.0
-```
-  
-  설치법
-  
-  ```bash
-  $ pip install -r requirements.txt
   ```
+
+```bash
+  $ pip install -r requirements.txt
+```
 
 ## 요구사항
 
-### 1. 데이터베이스
+### accounts app
 
-```python
-# movies/models.py
-from django.db import models
-from django.core.validators import MaxValueValidator
+### 1.  드라이버: 임건혁 / 네비게이터: 신지영
 
-...
-```
+1. 유저 회원가입, 로그인, 로그아웃
 
-- 영화에 대한 정보
+   UserCreationForm, AuthenticatedForm 을 사용하여 회원가입, 로그인 기능 구현
 
-  | 필드명      | 자료형  | 설명              |
-  | ----------- | ------- | ----------------- |
-  | title       | string  | 영화명            |
-  | title_en    | string  | 영화명(영문)      |
-  | audience    | Integer | 누적 관객수       |
-  | open_date   | date    | 개봉일            |
-  | genre       | string  | 장르              |
-  | watch_grade | string  | 관람등급          |
-  | score       | Float   | 평점              |
-  | poster_url  | text    | 포스터 이미지 url |
-  | description | text    | 영화 소개         |
+   로그아웃 구현
 
-  ```python
-  class Movie(models.Model):
-      title = models.CharField(max_length=30)
-      title_en = models.CharField(max_length=30)
-      audience = models.IntegerField()
-      open_date = models.DateField(auto_now=False, auto_now_add=False)
-      genre = models.CharField(max_length=20)
-      watch_grade = models.CharField(max_length=20)
-      score = models.DecimalField(
-          max_digits=4,
-          decimal_places=2,
-          validators=[MaxValueValidator(limit_value=10, message="10 이하의 수를 입력해주세요")]
-      )  # 소수점 위 2자리 아래 2자리/ 최대값을 10으로 설정
-      poster_url = models.TextField()
-      description = models.TextField()
-  ```
+   ```python
+   urlpatterns = [
+       path('signup/', views.signup, name='signup'),
+       path('login/', views.login, name='login'),
+       path('logout/', views.logout, name='logout'),
+   ]
+   ```
 
-- 개별 영화에 대한 한줄평
+   ```python
+   ...;
+   from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+   ...;
+   def signup(request):
+       if request.method == 'POST':
+           form = UserCreationForm(request.POST)
+           if form.is_valid():
+               user = form.save()
+               auth_login(request, user)
+               return redirect('movies:index')
+       else:
+           form = UserCreationForm()
+       context = {
+           'form': form,
+       }
+       return render(request, 'accounts/form.html', context)
+   
+   
+   def login(request):
+       if request.method == 'POST':
+           form = AuthenticationForm(request, request.POST)
+           if form.is_valid():
+               auth_login(request, form.get_user())
+               next_page = request.GET.get('next')
+               return redirect(next_page or 'movies:index')
+       else:
+           form = AuthenticationForm()
+       context = {
+           'form': form,
+       }
+       return render(request, 'accounts/form.html', context)
+   
+   
+   def logout(request):
+       auth_logout(request)
+       return redirect('movies:index')
+   ```
 
-  | 필드명   | 자료형  | 설명                       |
-  | -------- | ------- | -------------------------- |
-  | content  | String  | 한줄평(평가 내용)          |
-  | score    | Integer | 평점                       |
-  | movie_id | Integer | Movie의 Primary Key(id 값) |
-
-  ```python
-  class Review(models.Model):
-      movie_id = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name="reviews")
-      content = models.CharField(max_length=200)
-      score = models.IntegerField(
-          validators=[MaxValueValidator(limit_value=10, message="10 이하의 수를 입력해주세요")]
-      )
-  
-      class Meta:
-          ordering = ('-pk',)
-  
-  ```
-
-### 2. 페이지
-
-```python
-# movies/urls.py
-from django.urls import path
-from . import views
-
-app_name = 'movies'
-urlpatterns = [
-    ...
-]
-```
-
-```python
-# movies/forms.py
-from django import forms
-from .models import Movie, Review
-
-...
-```
-
-1. 영화목록
-
-   - 요청 URL
-
-     ```python
-     path('', views.index, name='index'),
-     ```
-
-   - views
-
-     ```python
-     def index(request):
-         movies = Movie.objects.all()
-         context = {
-             'movies': movies,
-         }
-         return render(request, 'movies/index.html', context)
-     ```
-
-   - HTML
-
-     ```django
-     {% extends 'base.html' %}
-     {% load static %}
-     
-     {% block title %}영화목록{% endblock title %}
-     
-     {% block body %}
-       <h1>영화 목록입니다.</h1>
-     <!-- 영화 정보 생성 Form 으로 가기 위한 a tag -->
-       <a href="{% url 'movies:create' %}">새 영화 등록</a><hr>
-     
-     <!-- 모든 영화 정보를 보여주기 위한 for -->
-       {% for movie in movies %}  
-       <ul>
-         <!-- 목록 상단에 img tag 를 사용해 사진 등록
-     		static 폴더에 있는 이미지를 불러옵니다. -->
-         <li><img src="{% static movie.poster_url %}" alt="poster_url" width="100px"><br>
-         <a href="{% url 'movies:detail' movie.pk %}">{{ movie.title }}</a> - {{ movie.score }}</li><br>
-       </ul>
-       {% empty %}
-       <p>아직 등록된 영화가 없어요 ㅜㅜ</p>
-       {% endfor %}
-     {% endblock body %}
-     ```
-
-2. & 3. 영화 정보 생성 및 Form
-
-   - 요청 URL
-
-     ```python
-     path('create/', views.create, name='create'),
-     ```
-
-   - views
-
-     ```python
-     def create(request):
-         movie_form = MovieForm(request.POST or None)
-         # POST로 들어온다면 그 정보를 담고 아니라면 빈 Form을 받아옵니다.
-         if movie_form.is_valid():  # POST 요청이 유효하다면 정보를 저장하고 detail 페이지로 이동합니다.
-             movie = movie_form.save()
-             return redirect('movies:detail', movie.pk)
-         context = {
-             'movie_form': movie_form,
-         }
-         # GET 요청이거나 form 이 유효하지 않다면 create 페이지를 보여줍니다.
-         return render(request, 'movies/create.html', context)
-     ```
-
-   - Form
-
-     ```python
-     # forms.py
-     class MovieForm(forms.ModelForm):
-         
-         class Meta:
-             model = Movie
-             fields = '__all__'
-             # 모든 필드를 받아옵니다.
-     ```
-
-   - HTML
-
-     ```django
-     {% extends 'base.html' %}
-     
-     {% block title %}영화 정보 생성{% endblock title %}
-     
-     {% block body %}
-       <h1>영화 정보 생성</h1>
-       <!-- 같은 url로 요청을 보내므로 따로 적어주지 않아도 됩니다. -->
-       <form method="POST">
-         {% csrf_token %}
-         {{ movie_form.as_p }}
-         <!-- submit 버튼을 통해 POST 요청을 보냅니다. -->
-         <button type="submit">생성하기</button> <a href="{% url 'movies:index' %}"><button>뒤로가기</button></a>
-       </form>
-     {% endblock body %}
-     ```
-
-4. 영화 정보 조회
-
-   - 요청 URL
-
-     ```python
-     path('<int:movie_pk>/', views.detail, name='detail'),
-     ```
-
-   - views
-
-     ```python
-     def detail(request, movie_pk):
-         movie = get_object_or_404(Movie, pk=movie_pk)
-         reviews = movie.reviews.all()
-         review_form = ReviewForm()
-         # 해당 영화의 정보 및 한줄평, 한줄평 작성 form을 받아옵니다.
-         context = {
-             'movie': movie,
-             'reviews': reviews,
-             'review_form': review_form,
-         }
-         return render(request, 'movies/detail.html', context)
-     ```
-
-   - HTML
-
-     ```django
-     {% extends 'base.html' %}
-     {% load static %}
-     
-     {% block title %}영화 정보 조회{% endblock title %}
-     <!-- 해당 영화의 모든 정보를 보여줍니다. -->
-     {% block body %}
-     <h1>영화 제목 (en): {{ movie.title }} ({{ movie.title_en }})</h1>
-     <h2>개봉일: {{ movie.open_date }}  평점: {{ movie.score }}</h2>
-     <img src="{% static movie.poster_url %}" alt="poster_url" width="100px">
-     <p>관람객 수: {{ movie.audience }}</p>
-     <p>장르: {{ movie.genre }}</p>
-     <p>줄거리: {{ movie.description }}</p>
-     <a href="{% url 'movies:index' %}"><button>뒤로가기</button></a>
-     <a href="{% url 'movies:update' movie.pk %}"><button>수정하기</button></a>
-     <form action="{% url 'movies:delete' movie.pk %}" method="POST">{% csrf_token %}<button type="submit">삭제하기</button></form>
-     <hr>
-     
-     <!-- POST 요청으로 한줄평을 작성하는 Form을 보여줍니다. -->
-     <h3>한줄평</h3>
-     <form action="{% url 'movies:reviews' movie.pk %}" method="POST">
+   ```django
+   {% extends 'base.html' %}
+   
+   {% block title %}form{% endblock title %}
+   
+   {% block body %}
+       {% if request.resolver_match.url_name == 'signup' %}
+       <h2>회원가입</h2>
+       {% else %}
+       <h2>로그인</h2>
+       {% endif %}
+       <form method="post">
        {% csrf_token %}
-       {{ review_form.as_p }}
-       <button type="submit">등록</button>
-     </form>
-     
-     <!-- 해당 영화에 등록된 한줄평들을 보여줍니다. -->
-     {% for review in reviews %}
-     <ul>
-       <li>{{ review.content }} - 별점: {{ review.score }}</li>
-     </ul>
-     {% empty %}
-     <p>아직 한줄평이 없어요 ㅜㅜ</p>
-     {% endfor %}
-     {% endblock body %}
-     ```
-
-5. & 6. 영화 정보 수정 및 Form
-
-   - 요청 URL
-
-     ```python
-     path('<int:movie_pk>/update/', views.update, name='update'),
-     ```
-
-   - views
-
-     ```python
-     def update(request, movie_pk):
-         movie = get_object_or_404(Movie, pk=movie_pk)
-         movie_form = MovieForm(request.POST or None, instance=movie)
-       	# instance 를 통해 해당 영화의 정보를 form에 담아 넘겨줍니다.
-         if movie_form.is_valid():
-             movie_form.save()
-             return redirect('movies:detail', movie_pk)
-         context = {
-             'movie_form': movie_form,
-         }
-         return render(request, 'movies/update.html', context)
-     ```
-
-   - Form
-
-     영화 생성과 같습니다.
-
-   - HTML
-
-     ```django
-     {% extends 'base.html' %}
-     <!-- 영화 생성 페이지와 유사합니다. -->
-     {% block title %}영화 정보 수정{% endblock title %}
-     
-     {% block body %}
-       <h1>영화 정보 수정</h1>
-       <form method="POST">
-         {% csrf_token %}
-         {{ movie_form.as_p }}
-         <button type="submit">수정하기</button> <a href="{% url 'movies:index' %}"><button>뒤로가기</button></a>
+       {{ form.as_p }}
+       <button type="submit">제출하기</button>
        </form>
-     {% endblock body %}
-     ```
+   {% endblock body %}
+   ```
 
-7. 영화 정보 삭제
+   
 
-   - 요청 URL
+### 2. 드라이버: 신지영 / 네비게이터: 임건혁
 
-     ```python
-     path('<int:movie_pk>/delete/', views.delete, name='delete'),
-     ```
+1. 유저목록, 유저 상세보기 기능 구현
 
-   - views
+   ```python
+   urlpatterns = [
+       path('', views.index, name='index'),
+       path('<int:user_pk>/', views.detail, name='detail'),
+       ...
+   ]
+   ```
 
-     ```python
-     @require_POST  # POST 요청으로만 작동합니다. GET 요청으로 들어올 시 405 에러를 발생시킵니다.
-     def delete(request, movie_pk):
-         movie = get_object_or_404(Movie, pk=movie_pk)
-         movie.delete()
-         return redirect('movies:index')
-     ```
+   ```python
+   from django.contrib.auth import get_user_model
+   
+   
+   def index(request):
+       users = get_user_model().objects.all()
+       context = {
+           'users':users,
+       }
+       return render(request, 'accounts/index.html', context)
+   
+   
+   def detail(request, user_pk):
+       user = get_user_model().objects.get(pk=user_pk)
+       context = {
+           'user':user,
+       }
+       return render(request, 'accounts/detail.html', context)
+   
+   ```
 
-8. 영화 한줄평 생성
+   +평점수정 기능 구현
 
-   - 요청 URL
+   ```python
+   # movies.urls.py
+   ...
+   path('<int:movie_pk>/reviews/<int:review_pk>/', views.review_update, name='review_update'),
+   ...
+   ```
 
-     ```python
-     path('<int:movie_pk>/reviews/', views.reviews, name='reviews'),
-     ```
+   ```python
+   # movies.views.py
+   @login_required
+   def review_update(request, movie_pk, review_pk):
+       review = get_object_or_404(Review, pk=review_pk)
+       if request.method == "POST":
+           form = ReviewForm(request.POST, instance=review)
+           if form.is_valid():
+               form.save()
+               return redirect('accounts:detail', review.user.pk)
+       else:
+           form = ReviewForm()
+       context = {'form':form}
+       return render(request, 'movies/review_update.html',context)
+   ```
 
-   - Form
+   
 
-     ```python
-     class ReviewForm(forms.ModelForm):
-         
-         class Meta:
-             model = Review
-             fields = ("content", "score",)
-             # 모든 필드를 받아오면 movie_pk에 대한 정보도 계속
-             # 받아줘야하므로 필요한 두가지만 받아옵니다.
-     ```
+### movies app
 
-   - views
+### 1. 드라이버: 신지영 / 네비게이터: 임건혁
 
-     ```python
-     def reviews(request, movie_pk):
-         movie = get_object_or_404(Movie, pk=movie_pk)
-         reviews = movie.reviews.all()
-         review_form = ReviewForm(request.POST or None)
-         if review_form.is_valid():
-             # review_form 이 유효하다면 정보를 저장하고 detail 페이지로 이동합니다
-             form = review_form.save(commit=False)
-             form.movie_id = movie
-             form.save()
-             return redirect('movies:detail', movie_pk)
-         # 유효하지 않다면 해당 정보를 detail 페이지로 넘겨줍니다.
-         context = {
-             'movie': movie,
-             'reviews': reviews,
-             'review_form': review_form,
-         }
-         return render(request, 'movies/detail.html', context)
-     ```
+1. 영화 좋아요 기능 구현
 
-## 실행 결과
+   해당 model에 user 정보를 추가하고 Movie model에는 좋아요 기능 추가를 위한 like_users 필드를 생성합니다.
 
-- Index 페이지
+   ```python
+   # movies.models.py
+   class Movie(models.Model):
+       ...
+       user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='movies')
+       like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='like_movies')
+       ...;
+   #
+   class Review(models.Model):
+       ...
+       user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='reviews')
+       ...;
+   ```
 
-  <img src="README_images/영화목록.PNG" alt="영화목록" style="zoom:50%;" />
+   ```python
+   # views.py
+   @login_required
+   def like(request, movie_pk):
+       user = request.user
+       movie = get_object_or_404(Movie, pk=movie_pk)
+       if user in movie.like_users.all():
+           movie.like_users.remove(user)
+       else:
+           movie.like_users.add(user)
+       return redirect('movies:detail', movie_pk)
+   ```
 
-- 영화정보생성 페이지
+   이미 좋아요를 누른 상태면 좋아요 유저 목록에서 삭제하고 반대의 경우 추가합니다.
 
-  <img src="README_images/영화정보생성.PNG" alt="영화정보생성" style="zoom: 50%;" />
+   ```django
+   <a href=" {% url 'movies:like' movie.pk %} ">
+     {% if request.user in movie.like_users.all %}
+       ♥
+     {% else %}
+       ♡
+     {% endif %}
+   </a>
+   
+   <span>
+   {{ movie.like_users.all | length }}명이 이 영화를 좋아합니다.
+   </span>
+   ```
 
-- 영화정보조회 페이지
+   좋아요를 누른 상태에선 속이 찬 하트를 보여주고 아닐 땐 빈 하트를 보여줍니다.
 
-  <img src="README_images/영화정보조회.PNG" alt="영화정보조회" style="zoom:50%;" />
+   
 
-- 영화정보 수정 페이지
+2. 영화 상세보기, 영화 생성, 평점 생성 기능에 추가한 user 정보를 넘겨줍니다.
 
-  <img src="README_images/영화정보수정.PNG" alt="영화정보수정" style="zoom:50%;" />
+   ```python
+   if form.is_valid():
+           form = form.save(commit=False)
+           form.movie_id = movie
+           form.user = request.user
+           form.save()
+   ```
 
-- 한줄평
+### 2. 드라이버: 임건혁 / 네비게이터: 신지영
 
-  ![한줄평](README_images/한줄평.PNG)
+1. 평점 삭제 기능 구현
 
+   본인만 삭제 가능하도록 구현합니다.
+
+   ```python
+   @require_POST
+   def review_delete(request, movie_pk, review_pk):
+       if request.user.is_authenticated:
+           review = get_object_or_404(Review, pk=review_pk)
+           if request.user == review.user:  # 요청보낸 유저가 리뷰를 작성한 유저일 때만 실행
+               review.delete()
+       return redirect('movies:detail', movie_pk)
+   ```
+
+   
+
+## 총평
+
+혼자서 할 때보다 실수나 오타를 줄일 수 있었고 에러가 발생했을 때 더 빠르게 수정할 수 있었습니다. 외워서 하는 것을 잘 하지 못하는데 같이 페어프로그래밍을 진행한 지영이가 도와줘서 더 빠르게 마무리할 수 있었습니다.
