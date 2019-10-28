@@ -24,6 +24,7 @@ def detail(request, movie_pk):
     }
     return render(request, 'movies/detail.html', context)
 
+
 @login_required
 def create(request):
     movie_form = MovieForm(request.POST or None)
@@ -38,7 +39,7 @@ def create(request):
     }
     return render(request, 'movies/create.html', context)
 
-
+@login_required
 def update(request, movie_pk):
     movie = get_object_or_404(Movie, pk=movie_pk)
     movie_form = MovieForm(request.POST or None, instance=movie)
@@ -58,6 +59,7 @@ def delete(request, movie_pk):
     return redirect('movies:index')
 
 
+@login_required
 def reviews(request, movie_pk):
     movie = get_object_or_404(Movie, pk=movie_pk)
     reviews = movie.reviews.all()
@@ -76,6 +78,7 @@ def reviews(request, movie_pk):
     return render(request, 'movies/detail.html', context)
 
 
+@login_required
 def review_update(request, movie_pk, review_pk):
     review = get_object_or_404(Review, pk=review_pk)
     if request.method == "POST":
@@ -89,7 +92,16 @@ def review_update(request, movie_pk, review_pk):
     return render(request, 'movies/review_update.html',context)
 
 
+@require_POST
+def review_delete(request, movie_pk, review_pk):
+    if request.user.is_authenticated:
+        review = get_object_or_404(Review, pk=review_pk)
+        if request.user == review.user:
+            review.delete()
+    return redirect('movies:detail', movie_pk)
 
+
+@login_required
 def like(request, movie_pk):
     user = request.user
     movie = get_object_or_404(Movie, pk=movie_pk)

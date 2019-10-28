@@ -7,6 +7,6 @@ accounts index
 
 {% block body %}
 {% for user in users %}
-{{user.pk}} {{user}} <br>
+<p>{{user.pk}} <a href="{% url 'accounts:detail' user.pk %}">{{user}}</a></p>
 {% endfor %}
 {% endblock body %}

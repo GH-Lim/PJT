@@ -38,7 +38,14 @@
 
 {% for review in reviews %}
 <ul>
-  <li>{{ review.content }} - 별점: {{ review.score }}</li>
+  <li>{{ review.content }} - 별점: {{ review.score }}
+  <form action="{% url 'movies:review_delete' movie.pk review.pk %}" method="post">
+  {% csrf_token %}
+  {% if request.user == review.user %}
+  <button type="submit">리뷰삭제하기</button>
+  {% endif %}
+  </form>
+  </li>
 </ul>
 {% empty %}
 <p>아직 한줄평이 없어요 ㅜㅜ</p>
