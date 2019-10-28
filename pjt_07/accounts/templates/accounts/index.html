@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}
+accounts index
+{% endblock title %}
+
+
+{% block body %}
+{% for user in users %}
+{{user.pk}} {{user}} <br>
+{% endfor %}
+{% endblock body %}
