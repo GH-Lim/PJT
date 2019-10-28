@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{% endblock title %}
+
+
+{% block body %}
+    {% comment %} # reviews = user.reviews.all()
+    # like_movies = user.like_movies.all() {% endcomment %}
+    <h2>작성한 평점</h2>
+    
+    {% for review in user.reviews.all %}
+    <p>{{ review.content }} {{ review.score }}</p>
+    <a href=" {% url 'movies:review_update' review.movie_id.pk review.pk %} ">[수정하기]</a>
+    {% endfor %}
+
+    <h2>'좋아요'한 영화</h2>
+    {% for movie in user.like_movies.all %}
+    <p>{{movie.title}}</p>
+    {% endfor %}
+
+{% endblock body %}

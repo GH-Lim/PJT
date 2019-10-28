@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import MaxValueValidator
+from django.conf import settings
 
 
 class Movie(models.Model):
@@ -16,6 +17,8 @@ class Movie(models.Model):
     )
     poster_url = models.TextField()
     description = models.TextField()
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='movies')
+    like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='like_movies')
 
 
 class Review(models.Model):
@@ -24,6 +27,7 @@ class Review(models.Model):
     score = models.IntegerField(
         validators=[MaxValueValidator(limit_value=10, message="10 이하의 수를 입력해주세요")]
     )
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='reviews')
 
     class Meta:
         ordering = ('-pk',)

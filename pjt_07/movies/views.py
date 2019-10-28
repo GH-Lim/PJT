@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
 from .models import Movie, Review
 from .forms import MovieForm, ReviewForm
+from django.contrib.auth.decorators import login_required
 
 
 def index(request):
@@ -23,11 +24,14 @@ def detail(request, movie_pk):
     }
     return render(request, 'movies/detail.html', context)
 
-
+@login_required
 def create(request):
     movie_form = MovieForm(request.POST or None)
+
     if movie_form.is_valid():
-        movie = movie_form.save()
+        movie = movie_form.save(commit=False)
+        movie.user = request.user
+        movie.save()
         return redirect('movies:detail', movie.pk)
     context = {
         'movie_form': movie_form,
@@ -61,6 +65,7 @@ def reviews(request, movie_pk):
     if review_form.is_valid():
         form = review_form.save(commit=False)
         form.movie_id = movie
+        form.user = request.user
         form.save()
         return redirect('movies:detail', movie_pk)
     context = {
@@ -69,3 +74,27 @@ def reviews(request, movie_pk):
         'review_form': review_form,
     }
     return render(request, 'movies/detail.html', context)
+
+
+def review_update(request, movie_pk, review_pk):
+    review = get_object_or_404(Review, pk=review_pk)
+    if request.method == "POST":
+        form = ReviewForm(request.POST, instance=review)
+        if form.is_valid():
+            form.save()
+            return redirect('accounts:detail', review.user.pk)
+    else:
+        form = ReviewForm()
+    context = {'form':form}
+    return render(request, 'movies/review_update.html',context)
+
+
+
+def like(request, movie_pk):
+    user = request.user
+    movie = get_object_or_404(Movie, pk=movie_pk)
+    if user in movie.like_users.all():
+        movie.like_users.remove(user)
+    else:
+        movie.like_users.add(user)
+    return redirect('movies:detail', movie_pk)
