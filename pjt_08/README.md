@@ -6,11 +6,33 @@
 
 python 3.7.4
 
+django 2.2.6
+
+drf-yasg
+
 ```
+certifi==2019.9.11
+chardet==3.0.4
+coreapi==2.3.3
+coreschema==0.0.4
 Django==2.2.6
 djangorestframework==3.10.3
+drf-yasg==1.17.0
+idna==2.8
+inflection==0.3.1
+itypes==1.1.0
+Jinja2==2.10.3
+MarkupSafe==1.1.1
+packaging==19.2
+pyparsing==2.4.2
 pytz==2019.3
+requests==2.22.0
+ruamel.yaml==0.16.5
+ruamel.yaml.clib==0.2.0
+six==1.12.0
 sqlparse==0.3.0
+uritemplate==3.0.0
+urllib3==1.25.6
 ```
 
 ```bash
@@ -221,4 +243,31 @@ Installed 10 object(s) from 1 fixture(s)
 
    
 
-   
+#### 4. API documents
+
+```python
+# movies/urls.py
+...;
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+...;
+
+schema_view = get_schema_view(
+    openapi.Info(
+        title='Movie API',
+        default_version='v1',
+        description='영화 관련 API 서비스입니다.',
+    )
+)
+...;
+
+urlpatterns = [
+    ...;
+    path('docs/', schema_view.with_ui('redoc'), name='api_docs'),
+    path('swagger/', schema_view.with_ui('swagger'), name='api_swagger'),
+]
+```
+
+![설명](images/docs.JPG)
+
+![swagger](images/swagger.JPG)
