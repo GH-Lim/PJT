@@ -385,19 +385,19 @@ from .models import Movie, Review
 
 - Index 페이지
 
-  <img src="README_images/영화목록.PNG" alt="영화목록" style="zoom:50%;" />
+  ![영화목록](README_images/영화목록.PNG)
 
 - 영화정보생성 페이지
 
-  <img src="README_images/영화정보생성.PNG" alt="영화정보생성" style="zoom: 50%;" />
+  ![영화목록](README_images/영화정보생성.PNG)
 
 - 영화정보조회 페이지
 
-  <img src="README_images/영화정보조회.PNG" alt="영화정보조회" style="zoom:50%;" />
+  ![영화목록](README_images/영화정보조회.PNG)
 
 - 영화정보 수정 페이지
 
-  <img src="README_images/영화정보수정.PNG" alt="영화정보수정" style="zoom:50%;" />
+  ![영화목록](README_images/영화정보수정.PNG)
 
 - 한줄평
 
