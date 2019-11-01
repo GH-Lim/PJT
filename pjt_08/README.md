@@ -72,7 +72,7 @@ Installed 10 object(s) from 1 fixture(s)
   admin.site.register(Movie)
   ```
 
-  ![db등록확인](images/db반영확인.jpg)
+  ![db등록확인](images/db반영확인.JPG)
 
 #### 3. `movies` API
 
@@ -105,7 +105,7 @@ Installed 10 object(s) from 1 fixture(s)
   # 데코레이터를 통해 해당 요청방법 외에는 허용하지 않습니다.
   ```
 
-  ![잘못된 요청](images/잘못된요청.jpg)
+  ![잘못된 요청](images/잘못된요청.JPG)
 
   ```python
   Method Not Allowed: /api/v1/genres/
@@ -122,7 +122,7 @@ Installed 10 object(s) from 1 fixture(s)
        return Response(serializer.data)
    ```
 
-   ![1번](images/1장르목록.jpg)
+   ![1번](images/1장르목록.JPG)
 
 2. `GET /api/v1/genres/{genre_pk}/` 특정 장르 결과 확인
 
@@ -134,7 +134,7 @@ Installed 10 object(s) from 1 fixture(s)
        return Response(serializer.data)
    ```
 
-   ![특정장르확인](images/2특정장르확인.jpg)
+   ![특정장르확인](images/2특정장르확인.JPG)
 
 3. `GET /api/v1/movies/ ` 영화 목록 확인
 
@@ -146,7 +146,7 @@ Installed 10 object(s) from 1 fixture(s)
        return Response(serializer.data)
    ```
 
-   ![영화목록](images/3영화목록.jpg)
+   ![영화목록](images/3영화목록.JPG)
 
 4. `GET /api/v1/movies/{movie_pk}/` 특정 영화 결과
 
@@ -158,7 +158,7 @@ Installed 10 object(s) from 1 fixture(s)
        return Response(serializer.data)
    ```
 
-   ![특정영화](images/4특정영화확인.jpg)
+   ![특정영화](images/4특정영화확인.JPG)
 
 5. `POST /api/v1/movies/{movie_pk}/reviews/` 특정 영화에 평점 등록
 
@@ -172,11 +172,11 @@ Installed 10 object(s) from 1 fixture(s)
        return Response({'message': '작성되었습니다.'})	# 아직 인증절차가 없기 때문
    ```
 
-   ![평점작성확인](images/5평점작성확인.jpg)
+   ![평점작성확인](images/5평점작성확인.JPG)
 
    - GET 요청시
 
-     ![특정평점확인](images/특정평점확인.jpg)
+     ![특정평점확인](images/특정평점확인.JPG)
 
 6. `PUT /api/v1/reviews/{review_pk}/` 특정 평점 수정
 
@@ -197,22 +197,22 @@ Installed 10 object(s) from 1 fixture(s)
            return Response({'message': '삭제되었습니다.'})
    ```
 
-   ![평점수정](images/6평점수정확인.jpg)
+   ![평점수정](images/6평점수정확인.JPG)
 
 7. `DELETE /api/v1/reviews/{review_pk}` 특정 평점 삭제
 
-   ![평점삭제](images/7평점삭제확인.jpg)
+   ![평점삭제](images/7평점삭제확인.JPG)
 
 8. 없는경로, 필드 누락
 
-   ![없는경로](images/없는경로.jpg)
+   ![없는경로](images/없는경로.JPG)
 
    ```python
    Not Found: /api/v1/movies/42/
    [01/Nov/2019 15:48:27] "GET /api/v1/movies/42/ HTTP/1.1" 404 37
    ```
 
-   ![필드누락](images/필드누락.jpg)
+   ![필드누락](images/필드누락.JPG)
 
    ```python
    Bad Request: /api/v1/movies/1/reviews/
