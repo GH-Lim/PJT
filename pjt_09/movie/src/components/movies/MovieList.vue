@@ -8,7 +8,7 @@
     2-3. 값 변경이 되면, 특정한 함수를 실행 해야합니다.
      -->
     <select class="form-control" v-model="selectedGenreId">
-      <option v-for="genre in genres" :key="genre.id">
+      <option v-for="genre in genres" :key="genre.id" :value="genre.id">
         {{ genre.name }}
       </option>
     </select>
@@ -37,7 +37,7 @@ export default {
   data () {
     return {
       // 활용할 데이터를 정의하시오.
-      'selectedGenreId': "전체보기",
+      'selectedGenreId': 0,
     }
   },
   // 0. props 데이터를 받이 위하여 설정하시오.
@@ -59,11 +59,11 @@ export default {
   // 주의할 것은 직접 부모 컴포넌트의 데이터를 변경할 수 없다는 점입니다.
   computed: {
     selected: function() {
-      if (this.selectedGenreId === '전체보기') {
+      if (this.selectedGenreId === 0) {
         return this.movies
       }
       else {
-        return this.movies.filter(movie => this.genres[movie.genre_id].name === this.selectedGenreId)
+        return this.movies.filter(movie => movie.genre_id === this.selectedGenreId)
       }
     },
   },
